@@ -1,0 +1,14 @@
+name: Test Release
+description: Createst test release
+on:
+  pull_request:
+    types:
+    - opened
+    - synchronize
+
+jobs:
+  test-release:
+    if: ${{ github.event.pull_request.base.ref
+            == github.event.repository.default_branch
+            && github.event.pull_request.draft }}
+    uses: ./.github/workflows/test-release.yaml

@@ -1,0 +1,41 @@
+name: Version
+description: Read version identifier from various sources
+
+inputs:
+  from:
+    description: Method of getting the version
+    required: true
+    type: choice
+    options:
+      - 'commit-message'
+      - 'pyproject.toml'
+      - 'version-file'
+  source:
+    description: Source containing the version, e.g. path to a file
+    required: false
+    type: string
+    default: ''
+
+outputs:
+  version:
+    description: Version
+    value: ${{ steps.version.outputs.v }}
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Version
+    id: version
+    shell: bash
+    run: ${{ inputs.from == 'pyproject.toml'
+             && format('sed -nE ''/\[project\]/,/^version\s*=\s*/ s/^version\s*=\s*("([^"]+)"|''\''''([^''\'''']+)''\'''')/v=\2\3/p''
+                            {0}',
+                       inputs.source || 'pyproject.toml')
+             || inputs.from == 'version-file'
+             && format('sed -nE ''1s/^/v=/p'' {0}',
+                       inputs.source || 'version.txt')
+             || inputs.from == 'commit-message'
+             && 'git log -1 --pretty=format:"%s"
+                 | sed -nE --expression="s/^v([^\.\s]+(\.[^\.\s]+)*)/v=\1/p"'
+             || 'exit 1'
+            }} >> "$GITHUB_OUTPUT"
