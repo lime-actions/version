@@ -11,7 +11,7 @@ jobs:
        pull-requests: write
        contents: read
     with:
-      version-from: 'pyproject.toml'
+      version-from: 'version-file'
       base: ${{ github.ref_name == 'release-candidate'
                 && github.event.repository.default_branch
                 || github.ref_name == 'dev'

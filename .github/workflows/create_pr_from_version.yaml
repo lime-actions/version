@@ -67,7 +67,7 @@ jobs:
       uses: ./
       with:
         from: ${{ inputs.version-from }}
-        path: ${{ inputs.version-path }}
+        source: ${{ inputs.version-path }}
     - name: Create PR
       if: ${{ steps.refs.outputs.base }}
       env:

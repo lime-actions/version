@@ -26,7 +26,7 @@ jobs:
       id: version
       uses: ./
       with:
-        from: 'pyproject.toml'
+        version-from: 'version-file'
     - name: Format title
       id: title
       run: |
