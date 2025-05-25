@@ -1,0 +1,35 @@
+name: Test get-version
+description: Test get-version
+on:
+  push:
+    paths:
+    - 'action.yaml'
+    - '.github/workflows/test_version.yaml'
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: pyproject.toml
+      id: pyproject
+      uses: ./
+      with:
+        from: 'pyproject.toml'
+        source: 'tests/pyproject.toml'
+    - name: version-file
+      id: version-file
+      uses: ./
+      with:
+        from: 'version-file'
+    - name: commit-message
+      id: commit-message
+      uses: ./
+      with:
+        from: 'commit-message'
+    - name: Results
+      run: |
+        echo "pyproject.toml=${{ steps.pyproject.outputs.version }}"
+        echo "version-file=${{ steps.version-file.outputs.version }}"
+        echo "commit-message=${{ steps.commit-message.outputs.version }}"
