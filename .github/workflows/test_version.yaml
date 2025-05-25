@@ -17,6 +17,7 @@ jobs:
       uses: ./
       with:
         from: 'pyproject.toml'
+        source: 'tests/pyproject.toml'
     - name: version-file
       id: version-file
       uses: ./

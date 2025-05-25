@@ -64,7 +64,7 @@ jobs:
     - name: Get version
       if: ${{ steps.refs.outputs.base }}
       id: version
-      uses: ./.github/actions/get-version@dev
+      uses: ./
       with:
         from: ${{ inputs.version-from }}
         path: ${{ inputs.version-path }}
