@@ -10,6 +10,7 @@ inputs:
       - 'commit-message'
       - 'pyproject.toml'
       - 'version-file'
+    default: 'version-file'
   source:
     description: Source containing the version, e.g. path to a file
     required: false

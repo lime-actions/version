@@ -36,15 +36,33 @@ jobs:
       if: github.event.pull_request.base.ref
           == github.event.repository.default_branch
       uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.base.ref }}
-    - name: Refresh
+    - name: Count matching paths
       if: github.event.pull_request.base.ref
           == github.event.repository.default_branch
+      id: paths
+      env:
+        PATTERN: '(action.yaml)|(version.txt)|(README.md)'
       run: |
-        git push origin \
-          "+${{ github.event.pull_request.base.ref
-               }}:${{ github.event.pull_request.head.ref }}"
+        printf "matches=%$( \
+          git diff --name-only \
+            ${{ github.event.pull_request.base.sha }} \
+            ${{ github.event.pull_request.head.sha }} \
+          | grep -c $PATTERN ).s" \
+        | tr ' ' 'x'
+        >> "$GITHUB_OUTPUT"
+    outputs:
+      matches: ${{ steps.paths.outputs.matches }}
+  release:
+    needs:
+    - merge
+    if: needs.merge.outputs.matches
+        && github.event.pull_request.base.ref
+        == github.event.repository.default_branch
+    uses: ./.github/workflows/release.yaml
+    permissions:
+      contents: write
+      pull-requests: write
+
   create-pr:
     needs:
     - merge
@@ -56,41 +74,10 @@ jobs:
        contents: read
     with:
       version-from: 'version-file'
+      version-path: 'version.txt'
       head: ${{ github.event.pull_request.base.ref }}
       base: ${{ github.event.pull_request.base.ref == 'dev'
                 && github.event.repository.default_branch
                 || 'dev' }}
       prefix: ${{ github.event.pull_request.base.ref == 'dev'
                   && 'v' || format('{0} v', github.ref_name) }}
-  check-is-release:
-    needs:
-    - merge
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Count matching paths
-      id: paths
-      env:
-        PATTERN: 'action.yaml|version.txt|README.md'
-      run: |
-        echo "matches=$( \
-          git diff --name-only \
-            ${{ github.event.pull_request.base.sha }} \
-            ${{ github.event.pull_request.head.sha }} \
-          | grep -c $PATTERN )" \
-        >> "$GITHUB_OUTPUT"
-    outputs:
-      matches: ${{ steps.paths.outputs.matches }}
-  release:
-    needs:
-    - check-is-release
-    if: github.event.pull_request.base.ref
-        == github.event.repository.default_branch
-        && needs.check-is-release.outputs.matches
-    uses: ./.github/workflows/release.yaml
-    permissions:
-      contents: write
-      pull-requests: write
