@@ -10,6 +10,7 @@ inputs:
       - 'commit-message'
       - 'pyproject.toml'
       - 'version-file'
+      - 'string'
     default: 'version-file'
   source:
     description: Source containing the version, e.g. path to a file
@@ -28,15 +29,23 @@ runs:
   - name: Version
     id: version
     shell: bash
-    run: ${{ inputs.from == 'pyproject.toml'
-             && format('sed -nE ''/\[project\]/,/^version\s*=\s*/ s/^version\s*=\s*("([^"]+)"|''\''''([^''\'''']+)''\'''')/v=\2\3/p''
-                            {0}',
-                       inputs.source || 'pyproject.toml')
-             || inputs.from == 'version-file'
-             && format('sed -nE ''1s/^/v=/p'' {0}',
-                       inputs.source || 'version.txt')
-             || inputs.from == 'commit-message'
-             && 'git log -1 --pretty=format:"%s"
-                 | sed -nE --expression="s/^v([^\.\s]+(\.[^\.\s]+)*)/v=\1/p"'
-             || 'exit 1'
-            }} >> "$GITHUB_OUTPUT"
+    run: |
+      ${{ inputs.from == 'pyproject.toml'
+          && format('sed -nE "/\[project\]/,/^version\s*=\s*/ s/^version\s*=\s*("\""([^"\""[:space:]]+)"\""|'([^'[:space:]]+)')/v=\2\3/p"
+                        {0}',
+                    inputs.source || 'pyproject.toml')
+          || inputs.from == 'version-file'
+          && format('sed -nE ''1s/^/v=/p'' {0}',
+                    inputs.source || 'version.txt')
+          || inputs.from == 'commit-message'
+          && 'git log -1 --pretty=format:"%s"
+              | sed -nE
+                  --expression="s/.*\bv([0-9]+(\.[^.[:space:]]+)*).*/v=\1/p"'
+          || inputs.from == 'string'
+          && format(
+            'echo ''{0}''
+            | sed -nE
+                --expression="1s/.*\bv([0-9]+(\.[^.[:space:]]+)*).*/v=\1/p"',
+            inputs.source)
+          || 'exit 2'
+        }} >> "$GITHUB_OUTPUT"

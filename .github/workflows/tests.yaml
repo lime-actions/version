@@ -1,0 +1,63 @@
+name: Test get-version
+description: Test get-version
+on:
+  push:
+    paths:
+    - 'action.yaml'
+    - '.github/workflows/tests.yaml'
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: |
+          action.yaml
+          test
+          tests/pyproject1.yaml
+          tests/pyproject2.yaml
+          tests/version.txt
+        sparse-checkout-cone-mode: false
+    - name: pyproject.toml
+      id: pyproject1
+      uses: ./
+      with:
+        from: 'pyproject.toml'
+        source: 'tests/pyproject1.toml'
+    - name: pyproject.toml
+      id: pyproject2
+      uses: ./
+      with:
+        from: 'pyproject.toml'
+        source: 'tests/pyproject2.toml'
+    - name: version-file
+      id: version-file
+      uses: ./
+      with:
+        from: 'version-file'
+        source: 'tests/version.txt'
+    - name: Test commit
+      run: |
+        touch test
+        git config user.email 'github-actions@users.noreply.github.com'
+        git config user.name 'GitHub Actions'
+        git add test
+        git commit -m 'version v1.2.3.alpha.ö on
+
+        other rows'
+    - name: commit-message
+      id: commit-message
+      uses: ./
+      with:
+        from: 'commit-message'
+    - name: Results
+      if: steps.pyproject1.outputs.version != '1.2.3.alpha.ö'
+          || steps.pyproject2.outputs.version != '1.2.3.alpha.ö'
+          || steps.version-file.outputs.version != '1.2.3.alpha.ö'
+          || steps.commit-message.outputs.version != '1.2.3.alpha.ö'
+      run: |
+        echo "pyproject.toml=${{ steps.pyproject.outputs.version }}"
+        echo "version-file=${{ steps.version-file.outputs.version }}"
+        echo "commit-message=${{ steps.commit-message.outputs.version }}"
