@@ -1,5 +1,5 @@
 name: Release
-description: Creates tag and release based on the commit message
+run-name: Release from ${{ github.event.pull_request.head.ref }}
 on:
   pull_request:
     types:
@@ -31,9 +31,6 @@ jobs:
           action.yaml
           ${{ github.event.action != 'closed' && 'version.txt' || '' }}
         sparse-checkout-cone-mode: false
-    - name: Create and update tags
-      id: tag
-      uses: ./.github/actions/update-tags
     - name: GH Release
       uses: lime-actions/gh-release@latest
       with:
