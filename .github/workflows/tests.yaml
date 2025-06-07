@@ -10,7 +10,7 @@ on:
 jobs:
   Tests:
     runs-on: ubuntu-latest
-    permiessions:
+    permissions:
       contents: write
     steps:
     - name: Checkout
