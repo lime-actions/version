@@ -17,8 +17,8 @@ jobs:
         sparse-checkout: |
           action.yaml
           test
-          tests/pyproject1.yaml
-          tests/pyproject2.yaml
+          tests/pyproject1.toml
+          tests/pyproject2.toml
           tests/version.txt
         sparse-checkout-cone-mode: false
     - name: pyproject.toml
