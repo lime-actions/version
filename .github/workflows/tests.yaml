@@ -5,6 +5,7 @@ on:
     paths:
     - 'action.yaml'
     - '.github/workflows/tests.yaml'
+    - 'tests/*'
 
 jobs:
   Tests:
