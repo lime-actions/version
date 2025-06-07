@@ -10,6 +10,8 @@ on:
 jobs:
   Tests:
     runs-on: ubuntu-latest
+    permiessions:
+      contents: write
     steps:
     - name: Checkout
       uses: actions/checkout@v4
