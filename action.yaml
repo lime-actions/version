@@ -31,7 +31,7 @@ runs:
     shell: bash
     run: |
       ${{ inputs.from == 'pyproject.toml'
-          && format('sed -nE "/\[project\]/,/^version\s*=\s*/ s/^version\s*=\s*("\""([^"\""[:space:]]+)"\""|'([^'[:space:]]+)')/v=\2\3/p"
+          && format('sed -nE "/\[project\]/,/^version\s*=\s*/ s/^version\s*=\s*("\""([^"\""[:space:]]+)"\""|''([^''[:space:]]+)'')/v=\2\3/p"
                         {0}',
                     inputs.source || 'pyproject.toml')
           || inputs.from == 'version-file'

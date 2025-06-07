@@ -1,5 +1,5 @@
-name: Test get-version
-description: Test get-version
+name: Tests
+run-name: Testing the action
 on:
   push:
     paths:
