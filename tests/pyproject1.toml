@@ -1,0 +1,10 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">=3.10"
+readme = "README.md"
+version = '1.2.3.alpha.ö'
+
+[tool.other]
+version = '0.0.0'
