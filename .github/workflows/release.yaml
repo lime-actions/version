@@ -1,5 +1,5 @@
 name: Release
-run-name: Release from ${{ github.event.pull_request.head.ref }}
+run-name: Creating release from ${{ github.ref_name }}
 on:
   pull_request:
     types:
@@ -28,8 +28,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         sparse-checkout: |
-          action.yaml
-          ${{ github.event.action != 'closed' && 'version.txt' || '' }}
+          version.txt
         sparse-checkout-cone-mode: false
     - name: GH Release
       uses: lime-actions/gh-release@latest
@@ -37,5 +36,4 @@ jobs:
         message: ${{ github.event.action != 'closed'
                      && 'Release candidate' || '' }}
         release-candidate: ${{ github.event.action != 'closed' }}
-        version-from: ${{ github.event.action == 'closed'
-                          && 'commit-message' || 'version-file' }}
+        version-from: 'version-file'
