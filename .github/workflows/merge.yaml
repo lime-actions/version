@@ -26,7 +26,6 @@ jobs:
     - name: Merge
       uses: lime-actions/merge@latest
       with:
-        # paths: '(action.yaml)|(README.md)'
         version-from: 'version-file'
     - name: Merge back
       if: github.event.pull_request.base.ref
