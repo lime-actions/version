@@ -1,3 +1,3 @@
-# Generic Template
+# Version
 
-Generic template for creating a repository
+Extract version identifier from various sources

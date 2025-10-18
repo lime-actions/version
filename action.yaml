@@ -47,5 +47,7 @@ runs:
             | sed -nE \
                 --expression="1s/.*\bv([0-9]+(\.[^.[:space:]]+)*).*/v=\1/p"',
             inputs.source)
-          || 'exit 2'
+          || format(
+            'echo ''{0} not recognised'' && exit 2',
+            inputs.from)
         }} >> "$GITHUB_OUTPUT"
