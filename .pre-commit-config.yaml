@@ -1,8 +1,9 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
+  rev: v6.0.0
   hooks:
   - id: check-case-conflict
+  - id: check-illegal-windows-names
   - id: check-toml
   - id: check-yaml
   - id: end-of-file-fixer
@@ -10,6 +11,6 @@ repos:
     name: No commits to main or master branch
   - id: trailing-whitespace
 - repo: https://github.com/rhysd/actionlint
-  rev: v1.7.0
+  rev: v1.7.8
   hooks:
   - id: actionlint

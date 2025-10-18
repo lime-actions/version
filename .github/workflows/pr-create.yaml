@@ -12,13 +12,8 @@ jobs:
        pull-requests: write
        contents: read
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        sparse-checkout: |
-          version.txt
-        sparse-checkout-cone-mode: false
     - name: Create PR from ${{ github.ref_name }}
       uses: lime-actions/pr-sync@latest
       with:
-        version-from: 'version-file'
+        version-from: version-file
+        version-source: version.txt
